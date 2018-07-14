@@ -1,14 +1,17 @@
 import React from 'react';
 import PropType from 'prop-types';
 
-const Card = ({property, activeProperty}) => {
-    const {price, address, picture, city, bedrooms, bathrooms, carSpaces} = property;
+const Card = ({property, activeProperty, setActiveProperty}) => {
+    const {price, address, picture, city, bedrooms, bathrooms, carSpaces, index} = property;
     const activeClass = property === activeProperty ? 'is-active': '';
-    return <div id="card-0" className={`card col-sm-12 col-md-6 col-lg-4 ${activeClass}`}>
+    return <div
+        id={`card-${index}`}
+        onClick={()=>{setActiveProperty(property, false)}}
+        className={`card col-sm-12 col-md-6 col-lg-4 ${activeClass}`}>
         <img src={picture} alt="Singer" />
         <p className="price">{price}</p>
         <div className="details">
-            <span className="index">1</span>
+            <span className="index">{index + 1}</span>
             <p className="location">
                 {city}<br />{address}
             </p>
@@ -25,7 +28,8 @@ const Card = ({property, activeProperty}) => {
 
 Card.propTypes = {
     property: PropType.object.isRequired,
-    activeProperty: PropType.object.isRequired
+    activeProperty: PropType.object.isRequired,
+    setActiveProperty: PropType.func.isRequired
 };
 
 export default Card;

@@ -11,6 +11,16 @@ class GoogleMap extends React.Component {
         }
     }
 
+    componentWillReceiveProps(nextProps) {
+        const {activeProperty} = nextProps;
+        const {latitude, longitude, index} = activeProperty;
+
+        const {markers} = this.state;
+        this.closeIws();
+        this.showIw(index);
+    }
+
+
     componentDidMount() {
         const {properties, activeProperty} = this.props;
         const {latitude, longitude} = activeProperty;
@@ -24,10 +34,11 @@ class GoogleMap extends React.Component {
     }
 
     createMarkers(properties) {
-        const {setActiveProperty} = this.props;
-
+        const {setActiveProperty, activeProperty} = this.props;
+        const activePropertyIndex = activeProperty.index;
+        const {markers} = this.state;
         properties.map(property => {
-            const {latitude, longitude, index} = property;
+            const {latitude, longitude, index, address} = property;
             this.marker = new google.maps.Marker({
                 position: {lat: latitude, lng: longitude},
                 map: this.map,
@@ -43,9 +54,33 @@ class GoogleMap extends React.Component {
                 }
             });
 
+            const iw = new google.maps.InfoWindow({
+               content: `<h1>${address}</h1>`
+            });
+
+            this.marker.iw = iw;
+
             this.marker.addListener('click', () => {
-                setActiveProperty(property);
-            })
+                this.closeIws();
+                setActiveProperty(property, true);
+            });
+
+            markers.push(this.marker);
+
+            this.showIw(activePropertyIndex);
+        });
+    }
+
+    showIw(index) {
+        const {markers} = this.state;
+        markers[index] && markers[index].iw.open(this.map, markers[index]);
+    }
+
+
+    closeIws() {
+        const {markers} = this.state;
+        markers.forEach((marker) => {
+            marker.iw.close();
         });
     }
 
