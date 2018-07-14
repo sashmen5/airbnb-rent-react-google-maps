@@ -1,5 +1,6 @@
 import React from 'react';
 import PropType from 'prop-types';
+import {priceFormat} from './utils/Formatters';
 
 const Card = ({property, activeProperty, setActiveProperty}) => {
     const {price, address, picture, city, bedrooms, bathrooms, carSpaces, index} = property;
@@ -9,7 +10,7 @@ const Card = ({property, activeProperty, setActiveProperty}) => {
         onClick={()=>{setActiveProperty(property, false)}}
         className={`card col-sm-12 col-md-6 col-lg-4 ${activeClass}`}>
         <img src={picture} alt="Singer" />
-        <p className="price">{price}</p>
+        <p className="price">{priceFormat(price)}</p>
         <div className="details">
             <span className="index">{index + 1}</span>
             <p className="location">

@@ -12,12 +12,18 @@ class GoogleMap extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        const {activeProperty} = nextProps;
+        const {activeProperty, filteredProperties, isFiltering} = nextProps;
         const {latitude, longitude, index} = activeProperty;
 
         const {markers} = this.state;
         this.closeIws();
-        this.showIw(index);
+
+        if (isFiltering && filteredProperties.length === 0 ) {
+            this.closeIws();
+        } else {
+            this.closeIws();
+            this.showIw(index)
+        }
     }
 
 
@@ -31,6 +37,25 @@ class GoogleMap extends React.Component {
         });
 
         this.createMarkers(properties);
+    }
+
+    componentDidUpdate() {
+        const {filteredProperties, isFiltering} = this.props;
+        const {markers} = this.state;
+        markers.forEach(marker => {
+            const {property} = marker;
+
+            if (isFiltering) {
+                if (filteredProperties.includes(property)) {
+                    markers[property.index].setVisible(true);
+                } else {
+                    markers[property.index].setVisible(false);
+                }
+            } else {
+                markers[property.index].setVisible(true);
+            }
+        })
+
     }
 
     createMarkers(properties) {
@@ -51,11 +76,12 @@ class GoogleMap extends React.Component {
                     size: new google.maps.Size(22, 55),
                     origin: new google.maps.Point(0, -15),
                     anchor: new google.maps.Point(11, 52)
-                }
+                },
+                property
             });
 
             const iw = new google.maps.InfoWindow({
-               content: `<h1>${address}</h1>`
+                content: `<h1>${address}</h1>`
             });
 
             this.marker.iw = iw;
@@ -84,7 +110,7 @@ class GoogleMap extends React.Component {
         });
     }
 
-    render(){
+    render() {
         return (
             <div className="mapContainer">
                 <div id="map" ref="map"></div>
@@ -97,7 +123,10 @@ class GoogleMap extends React.Component {
 
 GoogleMap.propTypes = {
     properties: PropTypes.array.isRequired,
-    setActiveProperty: PropTypes.func.isRequired
+    setActiveProperty: PropTypes.func.isRequired,
+    activeProperty: PropTypes.object.isRequired,
+    filteredProperties: PropTypes.array,
+    isFiltering: PropTypes.bool.isRequired
 };
 
 export default GoogleMap;
