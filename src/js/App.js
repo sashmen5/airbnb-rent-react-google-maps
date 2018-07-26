@@ -24,15 +24,9 @@ class App extends React.Component {
             priceTo: 1000000,
             filterSort: 'any'
         };
-
-        this.setActiveProperty = this.setActiveProperty.bind(this);
-        this.toggleFilter = this.toggleFilter.bind(this);
-        this.handleFilterChange = this.handleFilterChange.bind(this);
-        this.filterProperties = this.filterProperties.bind(this);
-        this.clearFilter = this.clearFilter.bind(this);
     }
 
-    handleFilterChange(e) {
+    handleFilterChange = (e) => {
         const target = e.target;
         const {value, name} = target;
         this.setState({
@@ -40,9 +34,9 @@ class App extends React.Component {
         }, () => {
             this.filterProperties();
         });
-    }
+    };
 
-    filterProperties() {
+    filterProperties = () => {
         const {properties, filterBedrooms, filterBathrooms, filterCars, filterSort, priceFrom, priceTo} = this.state;
         const isFiltering =
             filterBedrooms !== 'any' ||
@@ -53,7 +47,6 @@ class App extends React.Component {
             filterCars !== 'any';
 
         const getFilteredProperties = (properties) => {
-
             const filteredProperties = [];
             properties.map(property => {
                 const {bedrooms, bathrooms, carSpaces, price} = property;
@@ -83,16 +76,16 @@ class App extends React.Component {
             isFiltering: isFiltering,
             activeProperty: getFilteredProperties(properties)[0] || properties[0],
         })
-    }
+    };
 
-    toggleFilter(e){
+    toggleFilter = (e) => {
         e.preventDefault();
         this.setState({
             filterIsVisible: !this.state.filterIsVisible
         })
-    }
+    };
 
-    clearFilter(e, form) {
+    clearFilter = (e, form) => {
         e.preventDefault();
         this.setState({
             properties: this.state.properties.sort((a,b) => a.index - b.index),
@@ -107,9 +100,9 @@ class App extends React.Component {
             activeProperty: this.state.properties[0],
         });
         form.reset();
-    }
+    };
 
-    setActiveProperty(property, scroll) {
+    setActiveProperty = (property, scroll) => {
         const {index} = property;
         this.setState({
             activeProperty: property
@@ -122,14 +115,13 @@ class App extends React.Component {
                 easing: easeInOutCubic,
             });
         }
-    }
+    };
 
     render() {
-        const {properties, activeProperty, filterIsVisible, filteredProperties, isFiltering, filterSort} = this.state;
+        const {properties, activeProperty, filterIsVisible, filteredProperties, isFiltering} = this.state;
         const propertiesList = isFiltering ? filteredProperties : properties;
         return (
             <div>
-                {/* listings - Start */}
                 <div className="listings">
                     <Header
                         filterIsVisible={filterIsVisible}
@@ -156,17 +148,13 @@ class App extends React.Component {
                         </div>
                     </div>
                 </div>
-                {/* listings - End */}
 
-                {/* mapContainer - Start */}
                 <GoogleMap
                     properties={properties}
                     activeProperty={activeProperty}
                     filteredProperties={filteredProperties}
                     isFiltering={isFiltering}
                     setActiveProperty={this.setActiveProperty}/>
-
-                {/* mapContainer - End */}
             </div>
         )
     }

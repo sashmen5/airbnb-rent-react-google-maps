@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import marker from '../assets/marker.png';
 
 class GoogleMap extends React.Component {
 
@@ -13,11 +14,9 @@ class GoogleMap extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         const {activeProperty, filteredProperties, isFiltering} = nextProps;
-        const {latitude, longitude, index} = activeProperty;
+        const {index} = activeProperty;
 
-        const {markers} = this.state;
         this.closeIws();
-
         if (isFiltering && filteredProperties.length === 0 ) {
             this.closeIws();
         } else {
@@ -25,7 +24,6 @@ class GoogleMap extends React.Component {
             this.showIw(index)
         }
     }
-
 
     componentDidMount() {
         const {properties, activeProperty} = this.props;
@@ -44,7 +42,6 @@ class GoogleMap extends React.Component {
         const {markers} = this.state;
         markers.forEach(marker => {
             const {property} = marker;
-
             if (isFiltering) {
                 if (filteredProperties.includes(property)) {
                     markers[property.index].setVisible(true);
@@ -72,7 +69,7 @@ class GoogleMap extends React.Component {
                     text: `${index + 1}`
                 },
                 icon: {
-                    url: 'https://ihatetomatoes.net/react-tutorials/google-maps/images/img_map-marker.png', //TODO: change to own url,
+                    url: marker,
                     size: new google.maps.Size(22, 55),
                     origin: new google.maps.Point(0, -15),
                     anchor: new google.maps.Point(11, 52)
@@ -80,11 +77,11 @@ class GoogleMap extends React.Component {
                 property
             });
 
-            const iw = new google.maps.InfoWindow({
+            const infoWindow = new google.maps.InfoWindow({
                 content: `<h1>${address}</h1>`
             });
 
-            this.marker.iw = iw;
+            this.marker.infoWindow = infoWindow;
 
             this.marker.addListener('click', () => {
                 this.closeIws();
@@ -92,21 +89,19 @@ class GoogleMap extends React.Component {
             });
 
             markers.push(this.marker);
-
             this.showIw(activePropertyIndex);
         });
     }
 
     showIw(index) {
         const {markers} = this.state;
-        markers[index] && markers[index].iw.open(this.map, markers[index]);
+        markers[index] && markers[index].infoWindow.open(this.map, markers[index]);
     }
-
 
     closeIws() {
         const {markers} = this.state;
         markers.forEach((marker) => {
-            marker.iw.close();
+            marker.infoWindow.close();
         });
     }
 
